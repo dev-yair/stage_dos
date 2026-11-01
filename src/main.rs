@@ -3,11 +3,18 @@ mod camera;
 mod film;
 mod sphere;
 mod render;
-use glam::Vec3;
+mod material; 
+mod transform;
+mod shapes;
+mod plane;
+use glam::{Vec3, Quat};
 use crate::camera::Camera;
 use crate::film::Film;
 use crate::sphere::Sphere;
 use crate::render::render;
+use crate::material::Material;
+use crate::transform::Transform;
+use crate::plane::Plane;
 
 fn main() {
    
@@ -15,9 +22,17 @@ fn main() {
     let background = Vec3::new(50.0,50.0,50.0);
     
     //making the spherers that will be used in the image
-    let spheres = vec![Sphere::new(1.2, Vec3::new(-1.0, -0.2, -5.0), Vec3::new(255.0, 0.0, 0.0)), 
-    Sphere::new(1.0, Vec3::new(1.2, 0.3, -2.5), Vec3::new(0.0,255.0,0.0)),
-    Sphere::new(1.0, Vec3::new(0.0,0.0,0.0), Vec3::new(0.0,0.0,255.0))];
+
+    //setting the vlaues for the new sphers
+    let tran1 = Transform::new(Vec3::new(-1.0, -0.2, -5.0), Quat::IDENTITY, Vec3::splat(1.2));
+    let tran2 = Transform::new(Vec3::new(1.2, 0.3, -2.5), Quat::IDENTITY, Vec3::splat(1.0));
+    let tran3 = Transform::new(Vec3::new(0.0,0.0,0.0), Quat::IDENTITY, Vec3::splat(1.0));
+    let mat1 = Material::lambert(Vec3::new(1.0, 0.0, 0.0));
+    let mat2 = Material::lambert(Vec3::new(0.0, 1.0, 0.0));
+    let mat3 = Material::lambert(Vec3::new(0.0, 0.0, 1.0));
+
+    let spheres = vec![Sphere::new(tran1, mat1), 
+    Sphere::new(tran2, mat2),Sphere::new(tran3, mat3)];
 
     //creating the film 
     let mut film = Film::new(1024, 786);

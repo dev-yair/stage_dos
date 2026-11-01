@@ -2,6 +2,7 @@ use glam::{Vec3};
 use crate::camera::Camera;
 use crate::sphere::Sphere;
 use crate::film::Film;
+use crate::shapes::Shape;
 
 pub fn render(cam: &Camera, spheres: &[Sphere], film: &mut Film, background: Vec3){
 
@@ -17,10 +18,10 @@ pub fn render(cam: &Camera, spheres: &[Sphere], film: &mut Film, background: Vec
             let mut color = background;
 
             for sphere in spheres{
-                if let Some(h) = sphere.ray_intersect(pix_ray.origin(), pix_ray.direction(),
+                if let Some(h) = sphere.hit(pix_ray.origin(), pix_ray.direction(),
                 1e-3, closest_t){
                     closest_t = h.t;
-                    color = sphere.col;
+                    color = h.mat.diffuse;
                 }
             }
 
