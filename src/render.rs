@@ -1,10 +1,9 @@
 use glam::{Vec3};
 use crate::camera::Camera;
-use crate::sphere::Sphere;
 use crate::film::Film;
-use crate::shapes::Shape;
+use crate::scene::Scene;
 
-pub fn render(cam: &Camera, spheres: &[Sphere], film: &mut Film, background: Vec3){
+pub fn render(cam: &Camera, scene: &Scene, film: &mut Film){
 
     for y in 0..film.height{
         for x in 0..film.width{
@@ -13,17 +12,14 @@ pub fn render(cam: &Camera, spheres: &[Sphere], film: &mut Film, background: Vec
             let t = 1.0 - ( y as f32 + 0.5) / film.height as f32;
 
             let pix_ray = cam.ray(s,t);
-            
-            let mut closest_t = f32::INFINITY;
-            let mut color = background;
 
-            for sphere in spheres{
-                if let Some(h) = sphere.hit(pix_ray.origin(), pix_ray.direction(),
-                1e-3, closest_t){
-                    closest_t = h.t;
-                    color = h.mat.diffuse;
-                }
-            }
+            let maybe_hit = scene.closest_hit(pix_ray.origin(), 
+                    pix_ray.direction(), 1e-3, f32::INFINITY);
+
+            let color = match maybe_hit{
+                Some(h) => h.mat.diffuse,
+                None => scene.background,
+            };
 
             film.set_pixel(x, y, color);
         }
