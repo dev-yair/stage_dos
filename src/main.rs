@@ -8,6 +8,7 @@ mod transform;
 mod shapes;
 mod plane;
 mod scene;
+mod light;
 use glam::{Vec3, Quat};
 use crate::camera::Camera;
 use crate::film::Film;
@@ -17,6 +18,7 @@ use crate::material::Material;
 use crate::transform::Transform;
 use crate::plane::Plane;
 use crate::scene::Scene;
+use crate::light::Light;
 
 fn main() {
    
@@ -24,24 +26,27 @@ fn main() {
     let background = Vec3::new(0.2,0.2,0.2);
 
     //creating the scene based on our background
-    let mut scenes = Scene::new(background);
+    let mut scenes = Scene::new(background, Vec3::splat(0.1));
     
+    //creating the light or lights that will be used in the image
+    scenes.add_lights(Light::new(Vec3::new(5.0, 6.0, 2.0), Vec3::splat(0.6)));
+    scenes.add_lights(Light::new(Vec3::new(-5.0, 6.0, 2.0), Vec3::splat(0.6)));
     //making the spherers that will be used in the image
 
     //setting the vlaues for the new sphers
-    let tran1 = Transform::new(Vec3::new(-1.0, -0.2, -5.0), Quat::IDENTITY, Vec3::splat(1.2));
-    let tran2 = Transform::new(Vec3::new(1.2, 0.3, -2.5), Quat::IDENTITY, Vec3::splat(1.0));
-    let tran3 = Transform::new(Vec3::new(0.0,0.0,0.0), Quat::IDENTITY, Vec3::splat(1.0));
+    let tran1 = Transform::new(Vec3::new(-1.0, 1.2, -5.0), Quat::IDENTITY, Vec3::splat(1.2));
+    let tran2 = Transform::new(Vec3::new(1.2, 1.0, -2.5), Quat::IDENTITY, Vec3::splat(1.0));
+    let tran3 = Transform::new(Vec3::new(0.0,1.0,0.0), Quat::IDENTITY, Vec3::splat(1.0));
     let mat1 = Material::lambert(Vec3::new(1.0, 0.0, 0.0));
     let mat2 = Material::lambert(Vec3::new(0.0, 1.0, 0.0));
-    let mat3 = Material::lambert(Vec3::new(0.0, 0.0, 1.0));
+    let mat3 = Material::new(Vec3::new(0.0, 0.0, 1.0), Vec3::ONE, 50.0);
 
     scenes.add(Sphere::new(tran1, mat1));
     scenes.add(Sphere::new(tran2, mat2));
     scenes.add(Sphere::new(tran3, mat3));
 
     //creating the floor plane
-    let tran4 = Transform::new(Vec3::new(0.0, -1.4, 0.0), Quat::IDENTITY, Vec3::splat(3.0));
+    let tran4 = Transform::new(Vec3::new(0.0, 0.0, 0.0), Quat::IDENTITY, Vec3::splat(3.0));
     let mat4 = Material::lambert(Vec3::new(0.5, 0.5, 0.5));
     scenes.add(Plane::new(tran4, mat4));
 
