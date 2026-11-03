@@ -5,8 +5,8 @@ use crate::material::Material;
 
 pub struct Sphere{
 
-    transform: Transform, 
-    mat:       Material, 
+    mut transform: Transform, 
+    mut mat:       Material, 
 
 
 }
@@ -16,6 +16,16 @@ impl Sphere{
     pub fn new(transform: Transform, mat: Material) -> Self{
 
         Self{transform, mat}
+    }
+
+    fn update_trans(transform: Transform) -> Self {
+
+        Self{transform, mat: &self.mat}
+    }
+
+    fn update_mat(mat: Material) -> Self{
+
+        Self{transform: &self.transform, mat}
     }
 }
 
@@ -44,6 +54,8 @@ impl Shape for Sphere{
 
         Some(Hit {t, p, n: (p - cent) / rad, mat:&self.mat})
     }
+
+    
 }
 
 #[cfg(test)]
