@@ -5,8 +5,8 @@ use crate::material::Material;
 
 pub struct Sphere{
 
-    mut transform: Transform, 
-    mut mat:       Material, 
+    transform: Transform, 
+    mat:       Material, 
 
 
 }
@@ -18,15 +18,6 @@ impl Sphere{
         Self{transform, mat}
     }
 
-    fn update_trans(transform: Transform) -> Self {
-
-        Self{transform, mat: &self.mat}
-    }
-
-    fn update_mat(mat: Material) -> Self{
-
-        Self{transform: &self.transform, mat}
-    }
 }
 
 impl Shape for Sphere{
