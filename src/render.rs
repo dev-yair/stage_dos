@@ -5,13 +5,20 @@ use crate::scene::Scene;
 use crate::shapes::Hit;
 
 
+
 pub fn render(cam: &Camera, scene: &Scene, film: &mut Film){
 
-    for y in 0..film.height{
-        for x in 0..film.width{
+    use rayon::prelude::*;
+
+    let w = film.width;
+    let hei = film.height;
+
+
+    film.pixels.par_chunks_mut(w as usize).enumerate().for_each(|(y,row)|{
+        for (x, px) in row.iter_mut().enumerate(){
             
-            let s = (x as f32 + 0.5) / film.width as f32;
-            let t = 1.0 - ( y as f32 + 0.5) / film.height as f32;
+            let s = (x as f32 + 0.5) / w as f32;
+            let t = 1.0 - ( y as f32 + 0.5) / hei as f32;
 
             let pix_ray = cam.ray(s,t);
 
@@ -23,9 +30,9 @@ pub fn render(cam: &Camera, scene: &Scene, film: &mut Film){
                 None => scene.background,
             };
 
-            film.set_pixel(x, y, color);
+            *px = color;
         }
-    }
+    });
 }
 
 fn shade_pixel(hit: &Hit, scene: &Scene, d: Vec3) -> Vec3{

@@ -12,7 +12,7 @@ pub struct Hit<'a>{
 
 //every shpae answers the same question, the same way
 
-pub trait Shape{
+pub trait Shape: Sync{
 
     fn hit(&self, e: Vec3, d: Vec3, 
         t_min: f32, t_max: f32,) -> Option<Hit<'_>>;

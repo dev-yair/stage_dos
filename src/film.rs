@@ -5,7 +5,7 @@ use image::{RgbImage, Rgb};
 pub struct Film{
     pub width: u32,
     pub height: u32, 
-    pixels: Vec<Vec3>, 
+    pub pixels: Vec<Vec3>, 
     
 }
 

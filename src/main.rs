@@ -10,6 +10,7 @@ mod plane;
 mod scene;
 mod light;
 mod polymesh;
+mod obj;
 use glam::{Vec3, Quat};
 use crate::camera::Camera;
 use crate::film::Film;
@@ -21,6 +22,7 @@ use crate::plane::Plane;
 use crate::scene::Scene;
 use crate::light::Light;
 use crate::polymesh::PolyMesh;
+use crate::obj::load_obj;
 
 use std::f32::consts::PI;
 
@@ -50,14 +52,15 @@ fn main() {
 
 
     //creating the floor plane
-    let tran4 = Transform::new(Vec3::new(0.0, 0.0, 0.0), Quat::IDENTITY, Vec3::splat(3.0));
-    let mat4 = Material::lambert(Vec3::new(0.5, 0.5, 0.5));
-    scenes.add(Plane::new(tran4, mat4));
-    scene2.add(Plane::new(tran4, mat4));
-    scene3.add(Plane::new(tran4, mat4));
+    //let tran4 = Transform::new(Vec3::new(0.0, -0.737, 0.0), Quat::IDENTITY, Vec3::splat(3.0));
+    //let mat4 = Material::lambert(Vec3::new(0.5, 0.5, 0.5));
+    //scenes.add(Plane::new(tran4, mat4));
+    //scene2.add(Plane::new(tran4, mat4));
+    //scene3.add(Plane::new(tran4, mat4));
 
     //creating the film 
     let mut film = Film::new(1024, 768);
+    let mut film1 = Film::new(256, 192);
 
     //creating the mesh
     //making the positions
@@ -137,32 +140,53 @@ fn main() {
 
     let smooth_sphere = PolyMesh::new(sphere_pos, sphere_norms, sphere_pos_index, sphere_norm_index, mat2);
 
-    scenes.add(pyramid);
-    scenes.add(smooth_sphere);
+    //scenes.add(pyramid);
+    //scenes.add(smooth_sphere);
     //scene2.add(pyramid);
     //scene3.add(pyramid);
 
+
+
+    let vase_mat = Material::new(Vec3::new(0.5, 0.1, 0.5), Vec3::splat(0.8), 50.0);
+    let vase_mat1 = Material::new(Vec3::new(0.1, 0.9, 0.1), Vec3::splat(0.8), 50.0);
+    let vase_mat2 = Material::new(Vec3::new(0.9, 0.1, 0.1), Vec3::splat(0.8), 50.0);
+
+    let vase = load_obj("models/Vase.obj", vase_mat);
+    let table = load_obj("models/Table.obj", vase_mat1);
+    let back_drop = load_obj("models/backDrop.obj", vase_mat2);
     
+    scenes.add(vase);
+    scenes.add(table);
+    scenes.add(back_drop);
+
+    //let spot = load_obj("models/spot_triangulated.obj", spot_mat);
+
+    //scenes.add(spot);
+
+
 
 
     //different camera angles to view the mesh from 
-    let cam = Camera::new(Vec3::new(1.0, 3.0, 6.0), Vec3::new(0.0, 0.0, -2.5), Vec3::Y, 
+    let cam = Camera::new(Vec3::new(0.0, 2.3, 4.0), Vec3::new(0.0, 0.0, -2.5), Vec3::Y, 
     60.0, film.aspect());
-    let cam1 = Camera::new(Vec3::new(9.0, 3.5, -3.0), Vec3::new(0.0, 0.0, -2.5), Vec3::Y, 
+    let cam1 = Camera::new(Vec3::new(3.0, 3.5, 3.0), Vec3::new(0.0, 0.0, -2.5), Vec3::Y, 
     60.0, film.aspect());
-    let cam2 = Camera::new(Vec3::new(-6.0, 3.5, 4.0), Vec3::new(0.0, 0.0, -2.5), Vec3::Y, 
+    let cam2 = Camera::new(Vec3::new(1.2, 1.6, 2.6), Vec3::new(0.0, 0.0, -2.5), Vec3::Y, 
     60.0, film.aspect());
 
     //render the images, showing all the hits and ray intersects
+    let start = std::time::Instant::now();
     render(&cam, &scenes, &mut film);
-    film.save("render1.png");
+    eprintln!("spot render: {:?}", start.elapsed());
+    film.save("vase.png");
+    
 
 
     render(&cam1, &scenes, &mut film);
-    film.save("render2.png");
+    film.save("vase1.png");
 
 
     render(&cam2, &scenes, &mut film);
-    film.save("render3.png")
+    film.save("vase2.png")
     
 }
